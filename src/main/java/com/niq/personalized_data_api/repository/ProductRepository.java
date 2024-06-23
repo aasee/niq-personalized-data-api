@@ -14,7 +14,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 			+ " AND (:category IS NULL OR p.category = :category)"
 			+ " AND (:brand IS NULL OR p.brand = :brand)"
 			+ " ORDER BY p.productId")
-	List<Product> findProductsByShopperIdAndCategoryAndBrand(@Param("shopperId") String shopperId,
+	List<Product> findTheProducts(@Param("shopperId") String shopperId,
 			@Param("category") String category, @Param("brand") String brand, Pageable pageable);
 
 }

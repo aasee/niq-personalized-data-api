@@ -36,7 +36,7 @@ public class PersonalizedDataService {
 
 		limit = limit > 100 ? 100 : limit;
 
-		return productRepo.findProductsByShopperIdAndCategoryAndBrand(shopperId, category, brand,
+		return productRepo.findTheProducts(shopperId, category, brand,
 				PageRequest.of(0, limit));
 	}
 
