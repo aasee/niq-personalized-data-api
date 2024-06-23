@@ -11,6 +11,10 @@ This is Spring Boot based REST api app exposes 2 post end points and 1 get endpo
 2. Spring boot JPA - for Database operations.
 3. Spring boot cache - to cache and improve performance by reducing db calls.
 4. Swagger - for API documentation and test.
+5. Junit for unit testing
+6. Postgres 16 as database
+7. Docker & Docker Compose for deployment
+8. Java 22 version 
 
 # Rest End points
 Swagger url: http://localhost:9090/swagger-ui/index.html
