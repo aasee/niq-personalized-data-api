@@ -1,0 +1,84 @@
+mvn clean package -DskipTests
+
+docker build -t personalized-data-api .
+
+
+
+
+docker run --name postgres -e POSTGRES_PASSWORD=toor -d -p 5432:5432 postgres
+
+docker exec -it postgres psql -U postgres
+
+CREATE DATABASE niqpersonalizeddb;
+
+
+docker run -p 9090:9090 personalized-data-api
+
+
+
+http://localhost:8080/h2-console/
+
+http://localhost:8080/swagger-ui/index.html
+
+
+java -Dserver.port="9090" \
+     -Dspring.datasource.url="jdbc:postgresql://localhost:5432/postgres" \
+     -Dspring.datasource.username="postgres" \
+     -Dspring.datasource.password=toor \
+     -Dspring.datasource.driver-class-name="org.postgresql.Driver" \
+     -Dspring.jpa.properties.hibernate.dialect="org.hibernate.dialect.PostgreSQLDialect" \
+     -Dspring.jpa.show-sql="true" \
+     -Dspring.jpa.hibernate.ddl-auto="true" \
+     -jar personalized-data-api.jar
+
+
+server.port=${PORT}
+
+# PostgreSQL Configuration
+spring.datasource.url=${SPRING_DATASOURCE_URL}
+spring.datasource.username=${SPRING_DATASOURCE_USERNAME}
+spring.datasource.password=${SPRING_DATASOURCE_PASSWORD}
+spring.datasource.driver-class-name=${SPRING_DATASOURCE_DRIVER_CLASS_NAME}
+
+# JPA and Hibernate Configuration
+spring.jpa.properties.hibernate.dialect=${SPRING_DATASOURCE_DIALECT}
+spring.jpa.show-sql=${SPRING_DATASOURCE_SHOW_SQL}
+spring.jpa.hibernate.ddl-auto=${SPRING_JPA_HIBERNATE_DDL_AUTO}
+
+this is my application.properties and these are the values
+SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/postgres
+SPRING_DATASOURCE_USERNAME=postgres
+SPRING_DATASOURCE_PASSWORD=toor
+SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+SPRING_DATASOURCE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
+SPRING_DATASOURCE_SHOW_SQL=true
+SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+
+vm arugments
+
+-Dserver.port="9090"
+     -Dspring.datasource.url="jdbc:postgresql://localhost:5432/postgres" 
+     -Dspring.datasource.username="postgres" 
+     -Dspring.datasource.password=toor 
+     -Dspring.datasource.driver-class-name="org.postgresql.Driver" 
+     -Dspring.jpa.properties.hibernate.dialect="org.hibernate.dialect.PostgreSQLDialect" 
+     -Dspring.jpa.show-sql="true" 
+     -Dspring.jpa.hibernate.ddl-auto="update"
+
+
+docker run -e PORT=8080 \
+           -e SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/postgres \
+           -e SPRING_DATASOURCE_USERNAME=postgres \
+           -e SPRING_DATASOURCE_PASSWORD=toor \
+           -e SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver \
+           -e SPRING_DATASOURCE_DIALECT=org.hibernate.dialect.PostgreSQLDialect \
+           -e SPRING_DATASOURCE_SHOW_SQL=true \
+           -e SPRING_JPA_HIBERNATE_DDL_AUTO=update \
+           -p 8080:8080 personalized-data-api
+
+
+docker compose up -d
+
+docker tag personalized-data-api:latest aasee/personalized-data-api:latest
+

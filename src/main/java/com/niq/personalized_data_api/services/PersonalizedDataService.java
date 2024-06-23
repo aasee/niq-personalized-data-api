@@ -7,6 +7,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ import com.niq.personalized_data_api.models.Shopper;
 import com.niq.personalized_data_api.models.ShopperPersonalizedRequest;
 import com.niq.personalized_data_api.repository.ProductRepository;
 import com.niq.personalized_data_api.repository.ShopperRepository;
+import com.niq.personalized_data_api.utils.AppUtils;
 
 @Service
 public class PersonalizedDataService {
@@ -28,14 +31,20 @@ public class PersonalizedDataService {
 		this.shopperRepo = shopperRepo;
 	}
 
+	@Cacheable(value = "shopperCache", key = "#shopperId")
 	public List<Product> getProducts(String shopperId, String category, String brand, int limit) {
 
 		limit = limit > 100 ? 100 : limit;
+
 		return productRepo.findProductsByShopperIdAndCategoryAndBrand(shopperId, category, brand,
 				PageRequest.of(0, limit));
 	}
 
+	@CacheEvict(value = "shopperCache", key = "#shopperPersonalizedRequest.shopperId")
 	public boolean ingestShopperPersonalizedData(ShopperPersonalizedRequest shopperPersonalizedRequest) {
+
+		AppUtils.validateIngestShopperPersonalizedData(shopperPersonalizedRequest);
+
 		Optional<Shopper> optShopper = shopperRepo.findById(shopperPersonalizedRequest.getShopperId());
 
 		Shopper shopper = null;
@@ -76,7 +85,11 @@ public class PersonalizedDataService {
 		return true;
 	}
 
+	@CacheEvict(value = "shopperCache", allEntries = true)
 	public boolean ingestProductMetaData(Product productRequst) {
+
+		AppUtils.validateIngestProductMetaData(productRequst);
+
 		Optional<Product> optProd = this.productRepo.findById(productRequst.getProductId());
 
 		Product product = null;
